@@ -1,0 +1,88 @@
+# general settings
+name: test_MambaIR_SR_x4
+model_type: MambaIRModel
+scale: 4
+num_gpu: 1
+manual_seed: 10
+
+datasets:
+  test_1:  # the 1st test dataset
+    name: P_test
+    type: PairedImageDataset
+    dataroot_gt: /home/tangzz/Dataset/SODA_DRealSR/P/Test/HR
+    dataroot_lq: /home/tangzz/Dataset/SODA_DRealSR/P/Test/LR
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+  test_2:  # the 2nd test dataset
+    name: Pan_test
+    type: PairedImageDataset
+    dataroot_gt: /home/tangzz/Dataset/SODA_DRealSR/panasonic/Test/HR
+    dataroot_lq: /home/tangzz/Dataset/SODA_DRealSR/panasonic/Test/LR 
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+#
+  test_3:  # the 3rd test dataset
+    name: Sony_test
+    type: PairedImageDataset
+    dataroot_gt: /home/tangzz/Dataset/SODA_DRealSR/sony/Test/HR
+    dataroot_lq: /home/tangzz/Dataset/SODA_DRealSR/sony/Test/LR 
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+  test_4:  # the 4th test dataset
+    name: DSC_test
+    type: PairedImageDataset
+    dataroot_gt: /home/tangzz/Dataset/SODA_DRealSR/DSC/Test/HR
+    dataroot_lq: /home/tangzz/Dataset/SODA_DRealSR/DSC/Test/LR 
+    filename_tmpl: '{}'
+    io_backend:
+      type: disk
+
+#   test_5:  # the 5th test dataset
+#     name: Manga109
+#     type: PairedImageDataset
+#     dataroot_gt: /data1/guohang/dataset/SR/Manga109/HR
+#     dataroot_lq: /data1/guohang/dataset/SR/Manga109/LR_bicubic/X4
+#     filename_tmpl: '{}_LRBI_x4'
+#     io_backend:
+#       type: disk
+
+
+
+# network structures
+network_g:
+  type: MambaIR
+  upscale: 4
+  in_chans: 3
+  img_size: 64
+  img_range: 1.
+  d_state: 16
+  depths: [6, 6, 6, 6, 6, 6]
+  embed_dim: 180
+  mlp_ratio: 2
+  upsampler: 'pixelshuffle'
+  resi_connection: '1conv'
+
+# path
+path:
+  pretrain_network_g: /home/tangzz/Code/TTDG/MambaIR-main/experiments/MambaIR_SR_x4/models/net_g_55000.pth
+  strict_load_g: true
+
+# validation settings
+val:
+  save_img: true
+  suffix: ~  # add suffix to saved images, if None, use exp name
+
+  metrics:
+    psnr: # metric name, can be arbitrary
+      type: calculate_psnr
+      crop_border: 4
+      test_y_channel: true
+    ssim:
+      type: calculate_ssim
+      crop_border: 4
+      test_y_channel: true
