@@ -175,21 +175,19 @@ class Q_tools(nn.Module):
     def forward_train(self, input, x_size, Class_gt = None):
 
 
-        quant_high_list = [] #用来装high特征
-        codebook_loss_list = [] #用来装codebook损失
-        sort_index = [] #用来对选取的特征还原为原始顺序
+        quant_high_list = [] 
+        codebook_loss_list = []
+        sort_index = []
 
         loss_count = 0
 
         Random_ratio = 0.0
         if self.training:
-            Return_index = self.Shuffer_index(Class_gt, self.Num_codebook, Random_ratio) #-----在这里对类别进行重新分配
+            Return_index = self.Shuffer_index(Class_gt, self.Num_codebook, Random_ratio)
         else:
             Return_index = Class_gt
 
-        #输入尺寸调整
-        #input:[4, 2304, 180]
-        #Requist:[4, 180, 48, 48]
+      
         b,hw,c = input.shape
         input = input.transpose(2,1).contiguous()
         input = input.reshape(b,c,x_size[0],x_size[1]).contiguous()
@@ -198,21 +196,21 @@ class Q_tools(nn.Module):
         high_feature = input - low_feature
 
 
-        #在这里取特征，注意，取出的特征为空
+
         for i_class in range(self.Num_codebook):
 
             index_feature = torch.where(Return_index == i_class)
 
-            #表示当前没有对应类别的样本，就直接跳过当前处理步骤
+
             if len(index_feature[0]) == 0:
                 continue
             
             loss_count += 1
             Split_high_feature = high_feature[index_feature]
 
-            Split_high_feature = self.before_quant_group[i_class](Split_high_feature)   #每一个类，就是对应一个卷积
+            Split_high_feature = self.before_quant_group[i_class](Split_high_feature)   
             z_quant_high, codebook_loss, indices = self.quantize_group[i_class](Split_high_feature)
-            z_quant_high = self.after_quant_group[i_class](z_quant_high, None)  #把量化前的特征当作是一个残差特征
+            z_quant_high = self.after_quant_group[i_class](z_quant_high, None)  
 
 
             quant_high_list.append(z_quant_high)
@@ -235,7 +233,7 @@ class Q_tools(nn.Module):
 
         out = low_quant_feature + high_quant_feature
 
-        #输入尺寸调整
+
         out = out.reshape(b,c,-1).contiguous()
         out = out.transpose(2,1).contiguous()
 
@@ -247,9 +245,7 @@ class Q_tools(nn.Module):
 
     def forward_test(self, input, x_size):
 
-        #输入尺寸调整
-        #input:[4, 2304, 180]
-        #Requist:[4, 180, 48, 48]
+
         b,hw,c = input.shape
         input = input.transpose(2,1).contiguous()
         input = input.reshape(b,c,x_size[0],x_size[1]).contiguous()
@@ -265,10 +261,10 @@ class Q_tools(nn.Module):
         out = low_quant_feature + high_feature
 
 
-        #输入尺寸调整
+
         out = out.reshape(b,c,-1).contiguous()
         out = out.transpose(2,1).contiguous()
 
 
 
-        return out  #直接域相关特征了
+        return out 
