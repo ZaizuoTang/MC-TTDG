@@ -188,9 +188,9 @@ class Q_tools(nn.Module):
     def forward_train(self, input, x_size, Class_gt = None):
 
 
-        quant_high_list = [] #用来装high特征
-        codebook_loss_list = [] #用来装codebook损失
-        sort_index = [] #用来对选取的特征还原为原始顺序
+        quant_high_list = [] 
+        codebook_loss_list = [] 
+        sort_index = [] 
 
         loss_count = 0
 
@@ -204,9 +204,7 @@ class Q_tools(nn.Module):
         Return_index = Class_gt
 
 
-        #输入尺寸调整
-        #input:[4, 2304, 180]
-        #Requist:[4, 180, 48, 48]
+
         b,hw,c = input.shape
         input = input.transpose(2,1).contiguous()
         input = input.reshape(b,c,x_size[0],x_size[1]).contiguous()
@@ -224,21 +222,21 @@ class Q_tools(nn.Module):
         loss_classify = self.Classsify.compute_loss(out_feature, Return_index)
 
 
-        #在这里取特征，注意，取出的特征为空
+
         for i_class in range(self.Num_codebook):
 
             index_feature = torch.where(Return_index == i_class)
 
-            #表示当前没有对应类别的样本，就直接跳过当前处理步骤
+
             if len(index_feature[0]) == 0:
                 continue
             
             loss_count += 1
             Split_high_feature = high_feature[index_feature]
 
-            Split_high_feature = self.before_quant_group[i_class](Split_high_feature)   #每一个类，就是对应一个卷积
+            Split_high_feature = self.before_quant_group[i_class](Split_high_feature)   
             z_quant_high, codebook_loss, indices = self.quantize_group[i_class](Split_high_feature)
-            z_quant_high = self.after_quant_group[i_class](z_quant_high, None)  #把量化前的特征当作是一个残差特征
+            z_quant_high = self.after_quant_group[i_class](z_quant_high, None) 
 
             quant_high_list.append(z_quant_high)
             codebook_loss_list.append(codebook_loss)
@@ -260,7 +258,7 @@ class Q_tools(nn.Module):
 
         out = low_quant_feature + high_quant_feature
 
-        #输入尺寸调整
+
         out = out.reshape(b,c,-1).contiguous()
         out = out.transpose(2,1).contiguous()
 
@@ -292,9 +290,6 @@ class Q_tools(nn.Module):
         predicted_classes = torch.argmax(probabilities, dim=1)
 
         
-
-        #31.0856/0.8584 - 30.6003/0.8667 - 30.9447/0.8800
-        #利用low进行类别预测
         low_feature = self.Main_in_conv(low_feature)
         z_quant_low, codebook_loss_low, indices_low = self.Main_quantize(low_feature)
         low_quant_feature = self.Main_out_conv(z_quant_low, None)
@@ -322,8 +317,6 @@ class Q_tools(nn.Module):
     def forward_test(self, input, x_size):
 
         #输入尺寸调整
-        #input:[4, 2304, 180]
-        #Requist:[4, 180, 48, 48]
         b,hw,c = input.shape
         input = input.transpose(2,1).contiguous()
         input = input.reshape(b,c,x_size[0],x_size[1]).contiguous()
@@ -337,7 +330,7 @@ class Q_tools(nn.Module):
         # probabilities = torch.softmax(out, dim=1)
         # predicted_classes = torch.argmax(probabilities, dim=1)
 
-        # 31.1571/0.8594 - 31.2937/0.8791 - 31.2118/0.8836
+
         Update_list = []
         diff = torch.zeros(size=[self.Num_codebook])  #用来计数
         for i_num in range(self.Num_codebook):
@@ -352,19 +345,6 @@ class Q_tools(nn.Module):
             predicted_classes = torch.argmax(diff)  #选取投票最高的
         else:
             predicted_classes = torch.argmax(out)  #选取投票最高的
-
-
-        # #31.1461/0.8590 - 31.2608/0.8790 - 31.2213/0.8837
-        # Update_list = []
-        # diff = torch.zeros(size=[self.Num_codebook])  #用来计数
-        # for i_num in range(self.Num_codebook):
-        #     high_feature_i = self.before_quant_group[i_num](high_feature)   #每一个类，就是对应一个卷积
-        #     high_feature_i, codebook_loss, indices = self.quantize_group[i_num](high_feature_i)
-        #     high_feature_i = self.after_quant_group[i_num](high_feature_i, None)  #把量化前的特征当作是一个残差特征
-        #     out_i = self.Classsify(high_feature_i)
-        #     Update_list.append(out_i)
-        #     diff[i_num] = out_i[:,i_num]   #选取当前对应的分类
-        # predicted_classes = torch.argmax(diff) 
 
 
         low_feature = self.Main_in_conv(low_feature)
