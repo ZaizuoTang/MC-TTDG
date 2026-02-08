@@ -70,19 +70,19 @@ class PairedImageDataset(data.Dataset):
             self.paths = paired_paths_from_folder([self.lq_folder, self.gt_folder], ['lq', 'gt'], self.filename_tmpl, self.task)
 
             
-            # if self.opt['phase'] == 'train':
+            if self.opt['phase'] == 'train':
 
 
-            #     self.lq_2 = "/home/tangzz/Dataset/SODA_DRealSR/IMG/Train/LR"
-            #     self.gt_2 = "/home/tangzz/Dataset/SODA_DRealSR/IMG/Train/HR"
-            #     self.path2 = paired_paths_from_folder([self.lq_2, self.gt_2], ['lq', 'gt'], self.filename_tmpl, self.task)
-            #     self.leng2 = len(self.path2)
+                self.lq_2 = "/home/tangzz/Dataset/SODA_DRealSR/IMG/Train/LR"
+                self.gt_2 = "/home/tangzz/Dataset/SODA_DRealSR/IMG/Train/HR"
+                self.path2 = paired_paths_from_folder([self.lq_2, self.gt_2], ['lq', 'gt'], self.filename_tmpl, self.task)
+                self.leng2 = len(self.path2)
 
 
-            #     self.lq_3 = "/home/tangzz/Dataset/SODA_DRealSR/Canon/Train/LR"
-            #     self.gt_3 = "/home/tangzz/Dataset/SODA_DRealSR/Canon/Train/HR"
-            #     self.path3 = paired_paths_from_folder([self.lq_3, self.gt_3], ['lq', 'gt'], self.filename_tmpl, self.task)
-            #     self.leng3 = len(self.path3)
+                self.lq_3 = "/home/tangzz/Dataset/SODA_DRealSR/Canon/Train/LR"
+                self.gt_3 = "/home/tangzz/Dataset/SODA_DRealSR/Canon/Train/HR"
+                self.path3 = paired_paths_from_folder([self.lq_3, self.gt_3], ['lq', 'gt'], self.filename_tmpl, self.task)
+                self.leng3 = len(self.path3)
 
             #     # self.lq_4 = "/home/tangzz/Dataset/SODA_DRealSR/panasonic/Train/LR"
             #     # self.gt_4 = "/home/tangzz/Dataset/SODA_DRealSR/panasonic/Train/HR"
@@ -100,8 +100,8 @@ class PairedImageDataset(data.Dataset):
             #     # self.leng6 = len(self.path3)
 
 
-            #     self.Path_all = {"1": self.paths, "2": self.path2, "3":self.path3}
-            #     self.Num_all = {"1": len(self.paths), "2": self.leng2, "3":self.leng3}
+                self.Path_all = {"1": self.paths, "2": self.path2, "3":self.path3}
+                self.Num_all = {"1": len(self.paths), "2": self.leng2, "3":self.leng3}
 
 
 
