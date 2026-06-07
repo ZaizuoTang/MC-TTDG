@@ -41,7 +41,7 @@ Test-time domain generalization (TTDG) methods enhance the performance of neural
     python Stage3/basicsr/test.py -opt Stage3/options/test/test_MambaIR_SR_x4.yml
 
 
-#### [[Weight](https://drive.google.com/drive/folders/1OQSKeI5SlOh9hSmu60d2CprlvMy5XdE8?usp=drive_link)]
+#### Download [[weight](https://drive.google.com/drive/folders/1OQSKeI5SlOh9hSmu60d2CprlvMy5XdE8?usp=drive_link)]
     
     
 
