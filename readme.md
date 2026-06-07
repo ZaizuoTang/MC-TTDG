@@ -1,6 +1,6 @@
 ## Test-time Domain Generalization for Image Super-resolution (ICLR2026)
 
-### [[Paper]([https://openreview.net/pdf?id=jBuMH3DOPQ](https://openreview.net/pdf?id=jBuMH3DOPQ))] 
+### [[Paper](https://openreview.net/pdf?id=jBuMH3DOPQ)] 
 
 
 
